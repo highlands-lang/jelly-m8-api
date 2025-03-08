@@ -44,6 +44,6 @@ const createUploadFolder = () => {
   }
 };
 
-createAdmin();
-createUploadFolder();
-seedDB();
+// createAdmin();
+// createUploadFolder();
+// seedDB();
