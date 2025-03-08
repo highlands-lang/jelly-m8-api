@@ -6,8 +6,6 @@ import cookieParser from "cookie-parser";
 import compressFilter from "./lib/utils/compressFilter.util";
 import router from "./routing";
 import errorHandler from "./middleware/errorHandler";
-import config from "./lib/config/config";
-import authLimiter from "./middleware/authLimiter";
 import { xssMiddleware } from "./middleware/xssMiddleware";
 import corsConfig from "./lib/config/cors";
 import path from "node:path";

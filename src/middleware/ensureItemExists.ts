@@ -77,7 +77,7 @@ export const ensureResourceExists = (
     const { data } = validationResult;
 
     // Check if the resource exists
-    const resourceExists = await config.serviceFn(data);
+    const resourceExists = await config.serviceFn(data as any);
 
     if (!resourceExists) {
       return res.status(httpStatus.NOT_FOUND).json({

@@ -72,11 +72,8 @@ export const getCompliments = async ({
   const selectFields = {
     ...getTableColumns(ComplimentsTable),
     recipient: getTableColumns(recipient),
+    author: getTableColumns(author),
   };
-
-  if (queryBuilderOptions.includeAuthor) {
-    selectFields.author = getTableColumns(author);
-  }
 
   let queryBuilder = (tx ?? db)
     .select(selectFields)

@@ -1,6 +1,3 @@
-import type { QuestionInsert } from "@/database/schema";
-import { type ZodType, z } from "zod";
-
 // export const createQuestionSchema: ZodType<
 //   Partial<QuestionInsert, "isApproved" | "createdAt" | "">
 // > = z.object({

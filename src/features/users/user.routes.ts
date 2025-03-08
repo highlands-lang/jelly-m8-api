@@ -3,7 +3,6 @@ import * as controller from "./user.controller";
 import createAuthMiddleware from "@/middleware/auth";
 import { validateRequest } from "@/middleware/validate";
 import { createUserSchema } from "./user.schema";
-import z from "zod";
 import { ensureResourceExists } from "@/middleware/ensureItemExists";
 
 const usersRouter: Router = Router();

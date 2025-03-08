@@ -7,8 +7,8 @@ import fs from "node:fs/promises";
 let supabase = {} as ReturnType<typeof createClient>;
 if (config.node_env === "production") {
   supabase = createClient(
-    config.supabase.project_url,
-    config.supabase.project_api_key,
+    config.supabase.project_url as string,
+    config.supabase.project_api_key as string,
   );
   if (!supabase) {
     throw new TypeError("Supabase client init failed");
@@ -104,7 +104,7 @@ export const tryUploadUserProfileImage = async (
 
     return signedUrl;
   } catch (err) {
-    logger.error(`Error uploading profile image: ${err.message}`);
+    logger.error(`Error uploading profile image: ${(err as Error)?.message}`);
     return config.supabase.default_profile_image_url as string;
   }
 };

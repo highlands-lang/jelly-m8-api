@@ -1,9 +1,12 @@
 import type { QueryOperators } from "@/lib/types/types";
-import { type Table, type SQLWrapper, getTableColumns } from "drizzle-orm";
+import { type SQLWrapper } from "drizzle-orm";
 import { OPERATORS } from "@/lib/constants";
+import { PgTableWithColumns } from "drizzle-orm/pg-core";
+import { UsersTable } from "../schema";
+// import { Column } from "postgres";
 
 type Options<T> = {
-  table: Table;
+  table: PgTableWithColumns<any>;
   queryOptions?: Partial<T>;
   strict?: boolean;
   operators?: QueryOperators<T>;
@@ -22,26 +25,18 @@ export const constructWhereQuery = <T extends Record<string, unknown>>({
     throw new Error(`Query options are empty: ${JSON.stringify(queryOptions)}`);
   }
 
-  const tableCols = getTableColumns(table);
   const whereQuery = [];
   for (const key of keys) {
     const operator = operators[key] ?? "eq"; // Default to "eq" if no operator is specified
     const value = queryOptions[key as keyof T];
-    if (!value || !tableCols[key as keyof typeof tableCols]) {
-      continue;
-    }
     if (!OPERATORS[operator]) {
       // Validate that the operator exists in the OPERATORS map
       throw new Error(`Invalid operator: ${operator}`);
     }
-
+    UsersTable;
+    const comparisonOp = OPERATORS[operator];
     // Apply the operator to the table column and value
-    whereQuery.push(
-      OPERATORS[operator](
-        table[key as keyof typeof tableCols],
-        value as number | string,
-      ),
-    );
+    whereQuery.push(comparisonOp(table[key], value as number | string));
   }
   return whereQuery;
 };
@@ -72,7 +67,7 @@ export const formatObjectLikeQuery = <
     const value = obj[key];
     if (typeof value === "string" || typeof value === "number") {
       // Format the value if it's a string or number
-      formattedObj[key] = `%${value}%`;
+      formattedObj[key] = `%${value}%` as T[keyof T];
     }
   }
   return formattedObj;

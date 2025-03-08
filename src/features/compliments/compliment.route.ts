@@ -1,5 +1,4 @@
 import { Router } from "express";
-import createAuthMiddleware from "@/middleware/auth";
 import * as controller from "./compliment.controller";
 import { validateRequest } from "@/middleware/validate";
 import { z } from "zod";
