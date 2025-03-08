@@ -45,9 +45,6 @@ export const getCompliments = async ({
   pagination: { pageSize = 100 } = {},
   sorting = {},
   tx,
-  queryBuilderOptions = {
-    includeAuthor: true,
-  },
 }: QueryConfig<ComplimentSelect> & {
   tx?: PgTransaction<
     PostgresJsQueryResultHKT,
@@ -69,26 +66,19 @@ export const getCompliments = async ({
     ...sorting,
   });
 
-  const selectFields = {
-    ...getTableColumns(ComplimentsTable),
-    recipient: getTableColumns(recipient),
-    author: getTableColumns(author),
-  };
-
   let queryBuilder = (tx ?? db)
-    .select(selectFields)
+    .select({
+      ...getTableColumns(ComplimentsTable),
+      recipient: getTableColumns(recipient),
+      author: getTableColumns(author),
+    })
     .from(ComplimentsTable)
     .where(and(...query))
+    .innerJoin(author, eq(ComplimentsTable.userId, author.userId))
     .leftJoin(recipient, eq(ComplimentsTable.profileId, recipient.id))
     .orderBy(...sort)
     .limit(pageSize);
 
-  if (queryBuilderOptions.includeAuthor) {
-    queryBuilder = queryBuilder.innerJoin(
-      author,
-      eq(ComplimentsTable.userId, author.userId),
-    );
-  }
   const items = await queryBuilder;
   return items;
 };

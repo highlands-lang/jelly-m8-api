@@ -26,7 +26,7 @@ services:
       jelly_m8_db:
         condition: service_healthy
     restart: unless-stopped
-    command: ["dumb-init", "pnpm", "run", "dev"]
+    command: ["dumb-init", "pnpm", "run", "start"]
 
   jelly_m8_db:
     image: postgres:17.2-alpine3.21

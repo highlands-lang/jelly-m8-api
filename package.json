@@ -8,8 +8,8 @@
   "type": "commonjs",
   "scripts": {
     "dev": "drizzle-kit push & tsx --tsconfig ./tsconfig.json ./src/server.ts",
-    "build": "tsc --project './tsconfig.build.json'",
-    "start": "pnpm run build && cross-env NODE_ENV=production node --trace-warnings ./dist/index.js",
+    "build": "tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+    "start": "pnpm run build && cross-env NODE_ENV=production node --trace-warnings ./dist/server.js",
     "lint": "biome lint --write src/**/*.ts __test__/**/*.test.ts",
     "format": "biome format --write src/**/*.ts __test__/**/*.test.ts",
     "test": "",
@@ -51,6 +51,7 @@
     "@types/uuid": "^9.0.1",
     "cross-env": "^7.0.3",
     "drizzle-kit": "^0.30.2",
+    "tsc-alias": "^1.8.11",
     "typescript": "5.0.2"
   },
   "repository": {
