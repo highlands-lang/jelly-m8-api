@@ -1,8 +1,9 @@
 import type { QuerySort } from "@/lib/types/types";
-import { type Table, asc, desc } from "drizzle-orm";
+import { asc, desc } from "drizzle-orm";
+import { PgTableWithColumns } from "drizzle-orm/pg-core";
 
 interface SortQueryBuilderParams<T> extends QuerySort<T> {
-  table: Table;
+  table: PgTableWithColumns<any>;
 }
 
 export const constructSortQuery = <T>(params: SortQueryBuilderParams<T>) => {
@@ -11,12 +12,12 @@ export const constructSortQuery = <T>(params: SortQueryBuilderParams<T>) => {
   const sort = [];
   if (Array.isArray(ascCols)) {
     for (const k of ascCols) {
-      sort.push(asc(table[k]));
+      sort.push(asc(table[k as any]));
     }
   }
   if (Array.isArray(descCols)) {
     for (const k of descCols) {
-      sort.push(desc(table[k]));
+      sort.push(desc(table[k as any]));
     }
   }
   return sort;

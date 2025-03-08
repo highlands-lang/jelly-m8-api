@@ -44,6 +44,8 @@ const createUploadFolder = () => {
   }
 };
 
-// createAdmin();
-// createUploadFolder();
-// seedDB();
+if (config.node_env === "development") {
+  createAdmin();
+  createUploadFolder();
+  seedDB();
+}
