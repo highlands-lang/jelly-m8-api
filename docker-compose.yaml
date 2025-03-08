@@ -22,4 +22,4 @@ services:
     environment:
       NODE_ENV: "production"
     restart: unless-stopped
-    command: ["dumb-init", "pnpm", "run", "dev"]
+    command: ["dumb-init", "pnpm", "run", "start"]

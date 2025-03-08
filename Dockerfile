@@ -21,6 +21,3 @@ COPY . .
 
 # Expose port for the application to listen on
 EXPOSE 5000
-
-# Start the application with dumb-init in development mode
-CMD ["dumb-init", "pnpm","run", "dev"]
