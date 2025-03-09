@@ -52,3 +52,36 @@ export const handleLogout = async (req: Request, res: Response) => {
     message: "Successfully signed out.",
   });
 };
+
+export const handleStatus = async (req: Request, res: Response) => {
+  const apiKey = req.signedCookies[config.api.cookie_name]; // Use signedCookies for added security
+  if (apiKey !== config.api.key) {
+    return res
+      .status(httpStatus.FORBIDDEN)
+      .json({ message: "Access denied. Invalid API key." });
+  }
+
+  return res.status(httpStatus.OK).json({ message: "Access granted." });
+};
+
+export const handleApiLogin = async (req: Request, res: Response) => {
+  const { apiKey } = req.body;
+
+  if (apiKey !== config.api.key) {
+    return res
+      .status(httpStatus.FORBIDDEN)
+      .json({ message: "Access denied. Invalid API key." });
+  }
+
+  res.cookie(config.api.cookie_name, config.api.key, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    signed: true,
+    maxAge: 24 * 60 * 60 * 1000 * 364,
+  });
+
+  return res
+    .status(httpStatus.OK)
+    .json({ message: "Successfully authenticated. Cookie set." });
+};

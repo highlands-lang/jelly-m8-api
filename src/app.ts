@@ -9,6 +9,9 @@ import errorHandler from "./middleware/errorHandler";
 import { xssMiddleware } from "./middleware/xssMiddleware";
 import corsConfig from "./lib/config/cors";
 import path from "node:path";
+import { validateApiKey } from "./middleware/validateApiKey";
+import config from "./lib/config/config";
+import authLimiter from "./middleware/authLimiter";
 
 const app: Express = express();
 
@@ -20,16 +23,16 @@ app.use(express.json());
 
 app.use(xssMiddleware());
 
-app.use(cookieParser());
+app.use(cookieParser(config.cookie_secret));
 
 // Compression is used to reduce the size of the response body
 app.use(compression({ filter: compressFilter }));
 app.use(cors(corsConfig));
 
-// if (config.node_env === "production") {
-//   app.use("/api/v1/auth", authLimiter);
-// }
-
+if (config.node_env === "production") {
+  app.use("/api/v1/auth", authLimiter);
+}
+app.use("/api/v1", validateApiKey);
 app.use("/api/v1", router);
 
 app.use(errorHandler);

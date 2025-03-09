@@ -16,6 +16,9 @@ const envSchema = z
     SUPABASE_DEFAULT_PROFILE_IMAGE_URL: z.string().optional(),
     SUPABASE_PROJECT_URL: z.string().optional(),
     SUPABASE_API_KEY: z.string().optional(),
+    API_KEY: z.string(),
+    API_KEY_COOKIE_NAME: z.string(),
+    COOKIE_SECRET: z.string(),
   })
   .refine(
     (data) => {
@@ -66,5 +69,10 @@ const config = {
     default_profile_image_url: data.SUPABASE_DEFAULT_PROFILE_IMAGE_URL,
   },
   admin_auth_secret: data.ADMIN_AUTH_SECRET,
+  api: {
+    cookie_name: data.API_KEY_COOKIE_NAME,
+    key: data.API_KEY,
+  },
+  cookie_secret: data.COOKIE_SECRET,
 } as const;
 export default config;
