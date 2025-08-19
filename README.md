@@ -18,7 +18,8 @@ Using Docker is highly recommended to simplify the setup process. Follow the ste
 ```bash
 git clone ...
 ```
-**Switch to all-users-db-model**
+### Change branch
+Switch to all-users-db-model
 
 ### Build and Run
 
