@@ -4,6 +4,7 @@ import storageService from "./features/storage/storage.service";
 import userService from "./features/users/user.service";
 import path from "node:path";
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import type { CreateUserProfilePayload } from "./features/profiles/profile.schema";
 import config from "./lib/config/config";
 import { getRandSecret } from "./lib/utils/random";
@@ -16,10 +17,17 @@ interface InitData {
 }
 
 export async function seedDB(): Promise<void> {
-  const filePath = path.join(process.cwd(), "src/database/init.json");
+  const dbSeedfilePath = path.join(process.cwd(), "src/database/init.json");
+
+  if (!fsSync.existsSync(dbSeedfilePath)) {
+    console.log(
+      `Skipping db seeding, seed file doesn't exist at path: ${dbSeedfilePath}`
+    );
+    return;
+  }
 
   try {
-    const buffer = await fs.readFile(filePath);
+    const buffer = await fs.readFile(dbSeedfilePath);
     const initData: InitData[] = JSON.parse(buffer.toString());
 
     for (const { username, profile } of initData) {
@@ -56,7 +64,7 @@ export async function seedDB(): Promise<void> {
                 profile.imageName,
                 {
                   isLocal: true,
-                },
+                }
               ),
             });
           }
@@ -68,7 +76,7 @@ export async function seedDB(): Promise<void> {
 
           if (attempts >= maxAttempts) {
             console.error(
-              `Failed to seed user ${username} after ${maxAttempts} attempts.`,
+              `Failed to seed user ${username} after ${maxAttempts} attempts.`
             );
           }
         }
