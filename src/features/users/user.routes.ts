@@ -12,14 +12,14 @@ usersRouter.post(
   "/users",
   createAuthMiddleware("admin"),
   validateRequest({ body: createUserSchema }),
-  controller.handleCreateUser,
+  controller.handleCreateUser
 );
 
 // Get all users
 usersRouter.get(
   "/users",
   createAuthMiddleware("admin"),
-  controller.handleGetUsers,
+  controller.handleGetUsers
 );
 //  Get user
 usersRouter.get(
@@ -27,20 +27,20 @@ usersRouter.get(
   createAuthMiddleware("admin"),
   ensureResourceExists("user", {
     returnResourceResponse: true,
-  }),
+  })
 );
 // Get currently authenticated user
 usersRouter.get(
   "/auth",
   createAuthMiddleware("admin", "user"),
-  controller.handleGetCurrentUser,
+  controller.handleGetCurrentUser
 );
 // Invalidate access token
 usersRouter.patch(
-  "/users/:userId/access-secret/invalidate",
+  "/users/:userId/password/invalidate",
   createAuthMiddleware("admin"),
   ensureResourceExists("user"),
-  controller.handleInvalidateAccessKey,
+  controller.handleInvalidateUserPassword
 );
 
 // Detele user
@@ -48,7 +48,7 @@ usersRouter.delete(
   "/users/:userId",
   createAuthMiddleware("admin"),
   ensureResourceExists("user"),
-  controller.handleDeleteUser,
+  controller.handleDeleteUser
 );
 
 export default usersRouter;

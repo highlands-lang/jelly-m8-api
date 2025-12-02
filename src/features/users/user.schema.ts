@@ -1,10 +1,10 @@
 import z from "zod";
 import type { UserSelect } from "@/database/schema";
 
-interface CreateUserSchema extends Omit<UserSelect, "id" | "accessSecret"> {}
+interface CreateUserSchema extends Omit<UserSelect, "id" | "password"> {}
 
 export const createUserSchema: z.ZodType<CreateUserSchema> = z.object({
-  accessSecret: z.string().optional(),
+  password: z.string().optional(),
   username: z
     .string()
     .trim()
@@ -14,5 +14,5 @@ export const createUserSchema: z.ZodType<CreateUserSchema> = z.object({
 });
 
 export interface CreateUserPayload extends z.infer<typeof createUserSchema> {
-  accessSecret?: string;
+  password?: string;
 }

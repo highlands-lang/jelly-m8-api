@@ -7,10 +7,10 @@ import type { TypedRequest } from "@/lib/types/types";
 export const handleCreateUser = async (req: Request, res: Response) => {
   const payload = req.body as CreateUserPayload;
 
-  const storedUser = await userService.getUserBy({
+  const userExists = await userService.getUserBy({
     username: payload.username,
   });
-  if (storedUser) {
+  if (userExists) {
     return res.status(httpStatus.CONFLICT).json({
       message: "user with given name already exists",
     });
@@ -47,7 +47,7 @@ export const handleGetCurrentUser = async (req: Request, res: Response) => {
   });
 };
 
-export const handleInvalidateAccessKey = async (
+export const handleInvalidateUserPassword = async (
   req: TypedRequest<
     unknown,
     unknown,
@@ -55,19 +55,11 @@ export const handleInvalidateAccessKey = async (
       userId: number;
     }
   >,
-  res: Response,
+  res: Response
 ) => {
   const { userId } = req.params;
   // Making sure that user actually exists
-  const user = await userService.getUserBy({
-    id: userId as number,
-  });
-  if (!user) {
-    return res.status(httpStatus.NOT_FOUND).json({
-      message: "User with given id does not exist",
-    });
-  }
-  await userService.invalidateUserAccessSecret(userId as number);
+  await userService.invalidateUserPassword(userId as number);
   res.status(httpStatus.OK).json({
     message: "Successfully invalidated user access key",
   });
@@ -81,7 +73,7 @@ export const handleDeleteUser = async (
       userId: number;
     }
   >,
-  res: Response,
+  res: Response
 ) => {
   const userId = req.params.userId as number;
   const user = await userService.getUserBy({

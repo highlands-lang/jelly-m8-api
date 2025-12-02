@@ -31,7 +31,7 @@ const envSchema = z
       message:
         "SUPABASE_PROJECT_URL and SUPABASE_API_KEY are required when NODE_ENV is production",
       path: ["SUPABASE_PROJECT_URL", "SUPABASE_API_KEY"],
-    },
+    }
   );
 
 const { success, data, error } = envSchema.safeParse(process.env);
@@ -40,7 +40,7 @@ if (!success) {
   throw new Error(
     `Environment variable validation error: \n${error.errors
       .map((detail) => `${detail.path} ${detail.message}`)
-      .join("\n")}`,
+      .join("\n")}`
   );
 }
 

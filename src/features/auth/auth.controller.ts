@@ -10,27 +10,26 @@ import {
 import * as userService from "../users/user.service";
 
 export const handleLogin = async (req: Request, res: Response) => {
-  const { accessSecret } = req.body as UserLoginPayload;
+  const { password } = req.body as UserLoginPayload;
 
   const user = await userService.getUserBy({
-    accessSecret,
+    password,
   });
-  // In case the access secret is invalid
   if (!user) {
     return res.sendStatus(httpStatus.FORBIDDEN);
   }
   // User role for authorization, accessSecret for authentication
-  const { userRole, accessSecret: storedAS } = user;
+  const { userRole, password: storedPassword } = user;
   const token = createAccessToken({
     userRole,
     userId: user.id,
-    accessSecret: storedAS,
+    password: storedPassword,
   });
   // Setting token on cookies
   res.cookie(
     config.jwt.access_token.cookieName,
     token,
-    accessTokenCookieConfig,
+    accessTokenCookieConfig
   );
 
   res.status(httpStatus.OK).json({
@@ -46,7 +45,7 @@ export const handleLogout = async (req: Request, res: Response) => {
 
   res.clearCookie(
     config.jwt.access_token.cookieName,
-    clearAccessTokenCookieConfig,
+    clearAccessTokenCookieConfig
   );
   res.status(httpStatus.OK).json({
     message: "Successfully signed out.",

@@ -12,8 +12,7 @@ import path from "node:path";
 import { validateApiKey } from "./middleware/validateApiKey";
 import config from "./lib/config/config";
 import authLimiter from "./middleware/authLimiter";
-import "./init"
-
+import "./init";
 
 const app: Express = express();
 

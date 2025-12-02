@@ -10,8 +10,8 @@ import type { CreateUserPayload } from "./user.schema";
 import { getRandSecret } from "@/lib/utils/random";
 
 export const createUser = async (payload: CreateUserPayload) => {
-  if (!payload.accessSecret) {
-    payload.accessSecret = getRandSecret();
+  if (!payload.password) {
+    payload.password = getRandSecret();
   }
   const result = await db
     .insert(UsersTable)
@@ -22,13 +22,13 @@ export const createUser = async (payload: CreateUserPayload) => {
   return result.at(0);
 };
 
-export const invalidateUserAccessSecret = async (id: number) => {
-  const accessSecret = getRandSecret();
+export const invalidateUserPassword = async (id: number) => {
+  const password = getRandSecret();
   // To invalidate user session we simply update access token
   await db
     .update(UsersTable)
     .set({
-      accessSecret,
+      password,
     })
     .where(eq(UsersTable.id, id as unknown as number));
 };
@@ -52,21 +52,15 @@ export const getUserByName = async (name: string) => {
   ).at(0);
 };
 
-export const getUserByAccessSecret = async (accessSecret: string) => {
+export const getUserByPassword = async (password: string) => {
   return (
-    await db
-      .select()
-      .from(UsersTable)
-      .where(eq(UsersTable.accessSecret, accessSecret))
+    await db.select().from(UsersTable).where(eq(UsersTable.password, password))
   ).at(0);
 };
 
-export const getUserByRole = async (accessSecret: string) => {
+export const getUserByRole = async (password: string) => {
   return (
-    await db
-      .select()
-      .from(UsersTable)
-      .where(eq(UsersTable.accessSecret, accessSecret))
+    await db.select().from(UsersTable).where(eq(UsersTable.password, password))
   ).at(0);
 };
 
@@ -81,8 +75,8 @@ export const getUserBy = async (queryColumns: Partial<UserSelect>) => {
       whereQuery.push(
         eq(
           UsersTable[k as keyof UserSelect],
-          queryColumns[k as keyof UserSelect] as number | string,
-        ),
+          queryColumns[k as keyof UserSelect] as number | string
+        )
       );
     }
     return (

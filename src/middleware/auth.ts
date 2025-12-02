@@ -31,7 +31,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
           // In case admin invalidates user access secret
           // We need to close the user session
           const user = await userService.getUserBy({
-            accessSecret: payload.accessSecret as string,
+            password: payload.password as string,
           });
 
           if (!user) {
@@ -44,7 +44,7 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 
       // Call next() only after all checks are done
       return next();
-    },
+    }
   );
 };
 

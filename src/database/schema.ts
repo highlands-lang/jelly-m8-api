@@ -16,7 +16,7 @@ export const UsersTable = pgTable("users", {
   userRole: varchar({ enum: ["admin", "user"] })
     .default("user")
     .notNull(),
-  accessSecret: varchar("access_token", { length: 255 }).notNull(),
+  password: varchar("password", { length: 255 }).notNull(),
 });
 
 // User Profiles Table with enum
@@ -49,7 +49,7 @@ export const UserProfilesTable = pgTable(
     {
       userProfileConstraint: unique().on(t.id, t.userId),
     },
-  ],
+  ]
 );
 
 // Compliments Table
@@ -84,7 +84,7 @@ export const ComplimentsTable = pgTable(
     {
       userProfileConstraint: unique().on(t.userId, t.profileId),
     },
-  ],
+  ]
 );
 
 // Likes Table
@@ -103,7 +103,7 @@ export const LikesTable = pgTable(
   (t) => ({
     // Ensure a user can only like a profile or compliment once
     uniqueLikeConstraint: unique().on(t.userId, t.complimentId),
-  }),
+  })
 );
 
 export const QuestionsTable = pgTable("questions", {

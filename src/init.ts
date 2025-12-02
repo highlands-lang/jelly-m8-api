@@ -11,7 +11,7 @@ import type { CreateUserPayload } from "./features/users/user.schema";
 
 const createAdmin = async () => {
   const payload: CreateUserPayload = {
-    accessSecret: config.admin_auth_secret,
+    password: config.admin_auth_secret,
     username: "admin",
     userRole: "admin",
   };
