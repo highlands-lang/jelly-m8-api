@@ -13,10 +13,10 @@ export const createImageHandler =
         imageName: string;
       }
     >,
-    res: Response,
+    res: Response
   ) => {
     const imageName = req.params.imageName as string;
-    const imagePath = path.join(`${process.cwd()}/${searchPath}/`, imageName); // Construct the full path
+    const imagePath = path.join(process.cwd(), searchPath, imageName); // Construct the full path
     try {
       await fs.access(imagePath, fs.constants.R_OK);
       res.sendFile(imagePath);

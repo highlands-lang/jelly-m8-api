@@ -8,7 +8,7 @@ let supabase = {} as ReturnType<typeof createClient>;
 if (config.node_env === "production") {
   supabase = createClient(
     config.supabase.project_url as string,
-    config.supabase.project_api_key as string,
+    config.supabase.project_api_key as string
   );
   if (!supabase) {
     throw new TypeError("Supabase client init failed");
@@ -24,7 +24,7 @@ if (config.node_env === "production") {
 const uploadFileToSupabase = async (
   filepath: string,
   file: File,
-  contentType: string,
+  contentType: string
 ) => {
   const { error } = await supabase.storage
     .from("images")
@@ -76,7 +76,7 @@ const validateFile = (filename: string, mimeType: string) => {
 
 export const tryUploadUserProfileImage = async (
   userId: number,
-  profileImage?: Express.Multer.File,
+  profileImage?: Express.Multer.File
 ): Promise<string> => {
   try {
     if (!profileImage) {
@@ -92,7 +92,7 @@ export const tryUploadUserProfileImage = async (
 
     // Read the file and create a File object
     const imageBuffer = await fs.readFile(profileImage.path);
-    const file = new File([imageBuffer], fileName, {
+    const file = new File([imageBuffer as BlobPart], fileName, {
       type: profileImage.mimetype,
     });
 
@@ -109,11 +109,8 @@ export const tryUploadUserProfileImage = async (
   }
 };
 
-export const createLinkToLocalImageFile = (
-  imageName: string,
-  { isLocal = false } = {},
-) => {
-  return `${config.server.url}/api/v1/image/${imageName}${isLocal ? "/local" : ""}`;
+export const createLinkToLocalImageFile = (fullImageFilename: string) => {
+  return `${config.server.url}/api/v1/image/${fullImageFilename}`;
 };
 
 const storageService = {

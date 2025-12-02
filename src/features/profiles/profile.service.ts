@@ -19,24 +19,18 @@ import type { QueryConfig } from "@/lib/types/types";
 export const createProfile = async (
   userId: number,
   payload: CreateUserProfilePayload,
-  imageFile?: Express.Multer.File,
+  imageFile?: Express.Multer.File
 ) => {
   const activationSecret =
     config.node_env === "development" ? "unlock" : getRandSecret(5);
 
-  let profileImageUrl = storageService.createLinkToLocalImageFile(
-    imageFile?.fieldname ?? "",
-  );
+  const fullFileName = imageFile?.filename ?? "";
+  let profileImageUrl = storageService.createLinkToLocalImageFile(fullFileName);
   if (config.node_env === "production" && imageFile) {
     profileImageUrl = await tryUploadUserProfileImage(userId, imageFile);
   }
-  if (config.node_env === "development" && payload.imageName) {
-    profileImageUrl = storageService.createLinkToLocalImageFile(
-      payload.imageName,
-      {
-        isLocal: true,
-      },
-    );
+  if (config.node_env === "development" && fullFileName) {
+    profileImageUrl = storageService.createLinkToLocalImageFile(fullFileName);
   }
   const item = await db
     .insert(UserProfilesTable)
@@ -51,7 +45,7 @@ export const createProfile = async (
 };
 
 export const getProfiles = async (
-  queryConfig: QueryConfig<UserProfileSelect>,
+  queryConfig: QueryConfig<UserProfileSelect>
 ) => {
   const whereQuery = constructWhereQuery({
     table: UserProfilesTable,
@@ -67,7 +61,7 @@ export const getProfiles = async (
 };
 
 export const getProfileBy = async (
-  queryOptions: Partial<UserProfileSelect>,
+  queryOptions: Partial<UserProfileSelect>
 ) => {
   try {
     const keys = Object.keys(queryOptions);
@@ -79,8 +73,8 @@ export const getProfileBy = async (
       whereQuery.push(
         eq(
           UserProfilesTable[k as keyof UserProfileSelect],
-          queryOptions[k as keyof UserProfileSelect] as number | string,
-        ),
+          queryOptions[k as keyof UserProfileSelect] as number | string
+        )
       );
     }
     return (
@@ -98,12 +92,12 @@ export const getProfileBy = async (
 export const updateProfile = async (
   userId: number,
   payload: Partial<Omit<UserProfileInsert, "id">>,
-  imageFile?: Express.Multer.File,
+  imageFile?: Express.Multer.File
 ): Promise<void> => {
   if (config.node_env === "production" && imageFile) {
     payload.profileImageUrl = await tryUploadUserProfileImage(
       userId,
-      imageFile,
+      imageFile
     );
   }
   await db
@@ -142,7 +136,7 @@ export const setOneProfileActivation = async (id: number, state: boolean) => {
 };
 
 export const deleteProfile = async (
-  queryOptions: Partial<UserProfileSelect>,
+  queryOptions: Partial<UserProfileSelect>
 ) => {
   const whereQuery = constructWhereQuery<UserProfileSelect>({
     table: UserProfilesTable,
