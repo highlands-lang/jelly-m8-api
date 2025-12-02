@@ -12,6 +12,8 @@ import path from "node:path";
 import { validateApiKey } from "./middleware/validateApiKey";
 import config from "./lib/config/config";
 import authLimiter from "./middleware/authLimiter";
+import "./init"
+
 
 const app: Express = express();
 
@@ -40,7 +42,7 @@ app.use(errorHandler);
 app.all("*", (req, res) => {
   res.status(404);
   if (req.accepts("html")) {
-    res.sendFile(path.join(__dirname, "views", "404.html"));
+    res.sendFile(path.join(process.cwd(), "views", "404.html"));
   } else if (req.accepts("json")) {
     res.json({ error: "404 Not Found" });
   } else {
