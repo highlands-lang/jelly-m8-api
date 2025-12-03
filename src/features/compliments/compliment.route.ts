@@ -8,17 +8,17 @@ import type { ComplimentSelect } from "@/database/schema";
 const complimentsRouter: Router = Router();
 
 complimentsRouter.get(
-  "/compliments",
-  validateRequest({
-    query: z
-      .object({
-        title: z.string(),
-        asc: createSortValidation<ComplimentSelect>("likes", "createdAt"),
-        desc: createSortValidation<ComplimentSelect>("likes", "createdAt"),
-      })
-      .partial(),
-  }),
-  controller.handleGetCompliments,
+	"/compliments",
+	validateRequest({
+		query: z
+			.object({
+				title: z.string(),
+				asc: createSortValidation<ComplimentSelect>("likes", "createdAt"),
+				desc: createSortValidation<ComplimentSelect>("likes", "createdAt"),
+			})
+			.partial(),
+	}),
+	controller.handleGetCompliments,
 );
 
 export default complimentsRouter;

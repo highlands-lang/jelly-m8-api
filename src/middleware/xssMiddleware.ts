@@ -4,11 +4,11 @@ import { sanitize } from "@/lib/utils/sanitize.util";
 import type { ExpressMiddleware, SanitizeOptions } from "@/lib/types/types";
 
 export const xssMiddleware = (options?: SanitizeOptions): ExpressMiddleware => {
-  return (req, _res, next) => {
-    req.body = sanitize(req.body, options);
-    req.query = sanitize(req.query, options) as unknown as ParsedQs;
-    req.params = sanitize(req.params, options) as unknown as ParamsDictionary;
+	return (req, _res, next) => {
+		req.body = sanitize(req.body, options);
+		req.query = sanitize(req.query, options) as unknown as ParsedQs;
+		req.params = sanitize(req.params, options) as unknown as ParamsDictionary;
 
-    next();
-  };
+		next();
+	};
 };

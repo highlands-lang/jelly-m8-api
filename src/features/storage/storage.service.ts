@@ -6,13 +6,13 @@ import fs from "node:fs/promises";
 
 let supabase = {} as ReturnType<typeof createClient>;
 if (config.node_env === "production") {
-  supabase = createClient(
-    config.supabase.project_url as string,
-    config.supabase.project_api_key as string
-  );
-  if (!supabase) {
-    throw new TypeError("Supabase client init failed");
-  }
+	supabase = createClient(
+		config.supabase.project_url as string,
+		config.supabase.project_api_key as string,
+	);
+	if (!supabase) {
+		throw new TypeError("Supabase client init failed");
+	}
 }
 /**
  * Uploads a file to Supabase storage.
@@ -22,17 +22,17 @@ if (config.node_env === "production") {
  * @throws {Error} If the upload fails.
  */
 const uploadFileToSupabase = async (
-  filepath: string,
-  file: File,
-  contentType: string
+	filepath: string,
+	file: File,
+	contentType: string,
 ) => {
-  const { error } = await supabase.storage
-    .from("images")
-    .upload(filepath, file, { contentType, upsert: true });
+	const { error } = await supabase.storage
+		.from("images")
+		.upload(filepath, file, { contentType, upsert: true });
 
-  if (error) {
-    throw new Error(`Failed to upload file: ${error.message}`);
-  }
+	if (error) {
+		throw new Error(`Failed to upload file: ${error.message}`);
+	}
 };
 
 /**
@@ -43,15 +43,15 @@ const uploadFileToSupabase = async (
  * @throws {Error} If the URL creation fails.
  */
 const createSignedUrl = async (filepath: string, expiresIn: number) => {
-  const { data, error } = await supabase.storage
-    .from("images")
-    .createSignedUrl(filepath, expiresIn);
+	const { data, error } = await supabase.storage
+		.from("images")
+		.createSignedUrl(filepath, expiresIn);
 
-  if (error) {
-    throw new Error(`Failed to create signed URL: ${error.message}`);
-  }
+	if (error) {
+		throw new Error(`Failed to create signed URL: ${error.message}`);
+	}
 
-  return data.signedUrl;
+	return data.signedUrl;
 };
 
 /**
@@ -61,60 +61,60 @@ const createSignedUrl = async (filepath: string, expiresIn: number) => {
  * @throws {Error} If the file is invalid.
  */
 const validateFile = (filename: string, mimeType: string) => {
-  const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
-  const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
+	const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+	const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 
-  const extension = filename.split(".").pop()?.toLowerCase();
-  if (!extension || !allowedExtensions.includes(extension)) {
-    throw new Error(`Invalid file extension: ${extension}`);
-  }
+	const extension = filename.split(".").pop()?.toLowerCase();
+	if (!extension || !allowedExtensions.includes(extension)) {
+		throw new Error(`Invalid file extension: ${extension}`);
+	}
 
-  if (!allowedMimeTypes.includes(mimeType)) {
-    throw new Error(`Invalid MIME type: ${mimeType}`);
-  }
+	if (!allowedMimeTypes.includes(mimeType)) {
+		throw new Error(`Invalid MIME type: ${mimeType}`);
+	}
 };
 
 export const tryUploadUserProfileImage = async (
-  userId: number,
-  profileImage?: Express.Multer.File
+	userId: number,
+	profileImage?: Express.Multer.File,
 ): Promise<string> => {
-  try {
-    if (!profileImage) {
-      throw new Error("No profile image provided");
-    }
+	try {
+		if (!profileImage) {
+			throw new Error("No profile image provided");
+		}
 
-    // Validate the file
-    validateFile(profileImage.originalname, profileImage.mimetype);
+		// Validate the file
+		validateFile(profileImage.originalname, profileImage.mimetype);
 
-    // Generate file path
-    const fileName = `profile.${profileImage.originalname.split(".").pop()}`;
-    const filepath = `public/${userId}/${fileName}`;
+		// Generate file path
+		const fileName = `profile.${profileImage.originalname.split(".").pop()}`;
+		const filepath = `public/${userId}/${fileName}`;
 
-    // Read the file and create a File object
-    const imageBuffer = await fs.readFile(profileImage.path);
-    const file = new File([imageBuffer as BlobPart], fileName, {
-      type: profileImage.mimetype,
-    });
+		// Read the file and create a File object
+		const imageBuffer = await fs.readFile(profileImage.path);
+		const file = new File([imageBuffer as BlobPart], fileName, {
+			type: profileImage.mimetype,
+		});
 
-    // Upload the file to Supabase
-    await uploadFileToSupabase(filepath, file, profileImage.mimetype);
+		// Upload the file to Supabase
+		await uploadFileToSupabase(filepath, file, profileImage.mimetype);
 
-    // Create a signed URL for the uploaded file
-    const signedUrl = await createSignedUrl(filepath, 60 * 60 * 60); // 60 hours expiration
+		// Create a signed URL for the uploaded file
+		const signedUrl = await createSignedUrl(filepath, 60 * 60 * 60); // 60 hours expiration
 
-    return signedUrl;
-  } catch (err) {
-    logger.error(`Error uploading profile image: ${(err as Error)?.message}`);
-    return config.supabase.default_profile_image_url as string;
-  }
+		return signedUrl;
+	} catch (err) {
+		logger.error(`Error uploading profile image: ${(err as Error)?.message}`);
+		return config.supabase.default_profile_image_url as string;
+	}
 };
 
 export const createLinkToLocalImageFile = (fullImageFilename: string) => {
-  return `${config.server.url}/api/v1/image/${fullImageFilename}`;
+	return `${config.server.url}/api/v1/image/${fullImageFilename}`;
 };
 
 const storageService = {
-  createLinkToLocalImageFile,
+	createLinkToLocalImageFile,
 };
 
 export default storageService;

@@ -1,5 +1,5 @@
-import compression from 'compression';
-import type { Request, Response } from 'express';
+import compression from "compression";
+import type { Request, Response } from "express";
 
 /**
  * Filter Function for the compression middleware
@@ -8,13 +8,13 @@ import type { Request, Response } from 'express';
  * @returns Returns false if request header contains x-no-compression
  */
 const compressFilter = (req: Request, res: Response): boolean => {
-  if (req.headers['x-no-compression']) {
-    // don't compress responses with this request header
-    return false;
-  }
+	if (req.headers["x-no-compression"]) {
+		// don't compress responses with this request header
+		return false;
+	}
 
-  // fallback to standard filter function
-  return compression.filter(req, res);
+	// fallback to standard filter function
+	return compression.filter(req, res);
 };
 
 export default compressFilter;

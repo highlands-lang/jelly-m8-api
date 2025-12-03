@@ -11,25 +11,25 @@ const authRouter: Router = Router();
 authRouter.get("/auth/api/status", authController.handleStatus);
 
 authRouter.post(
-  "/auth/login",
-  validateRequest({ body: userLoginSchema }),
-  authController.handleLogin,
+	"/auth/login",
+	validateRequest({ body: userLoginSchema }),
+	authController.handleLogin,
 );
 
 authRouter.post(
-  "/auth/logout",
-  createAuthMiddleware("admin", "user"),
-  authController.handleLogout,
+	"/auth/logout",
+	createAuthMiddleware("admin", "user"),
+	authController.handleLogout,
 );
 
 authRouter.post(
-  "/auth/api/login",
-  validateRequest({
-    body: z.object({
-      apiKey: z.string().max(255),
-    }),
-  }),
-  authController.handleApiLogin,
+	"/auth/api/login",
+	validateRequest({
+		body: z.object({
+			apiKey: z.string().max(255),
+		}),
+	}),
+	authController.handleApiLogin,
 );
 
 export default authRouter;

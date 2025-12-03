@@ -8,8 +8,8 @@ import { createUserProfileSchema, updateProfileSchema } from "./profile.schema";
 // import { createComplimentSchema } from "../compliments/compliment.schema";
 import { z } from "zod";
 import {
-  ensureUserProfileExists,
-  stripUnmodifiableFields,
+	ensureUserProfileExists,
+	stripUnmodifiableFields,
 } from "./profile.middleware";
 import { validateRequest } from "@/middleware/validate";
 import { ensureResourceExists } from "@/middleware/ensureItemExists";
@@ -19,64 +19,64 @@ const profilesRouter: Router = Router();
 
 // Create user profile
 profilesRouter.post(
-  "/users/:userId/profile",
-  createAuthMiddleware("admin", "user"),
-  ensureResourceExists("user"),
-  upload.single("imageFile"),
-  validateRequest({ body: createUserProfileSchema }),
-  controller.handleCreateProfile,
+	"/users/:userId/profile",
+	createAuthMiddleware("admin", "user"),
+	ensureResourceExists("user"),
+	upload.single("imageFile"),
+	validateRequest({ body: createUserProfileSchema }),
+	controller.handleCreateProfile,
 );
 
 profilesRouter.get(
-  "/profiles",
-  validateRequest({
-    query: z
-      .object({
-        gender: z.enum(["male", "female"]),
-        displayName: z.string(),
-      })
-      .partial(),
-  }),
-  controller.handleGetProfiles,
+	"/profiles",
+	validateRequest({
+		query: z
+			.object({
+				gender: z.enum(["male", "female"]),
+				displayName: z.string(),
+			})
+			.partial(),
+	}),
+	controller.handleGetProfiles,
 );
 
 // Get user profile
 profilesRouter.get(
-  "/users/:userId/profile",
-  ensureResourceExists("user"),
-  ensureUserProfileExists,
-  controller.handleGetProfile,
+	"/users/:userId/profile",
+	ensureResourceExists("user"),
+	ensureUserProfileExists,
+	controller.handleGetProfile,
 );
 
 profilesRouter.patch(
-  "/users/:userId/profile",
-  createAuthMiddleware("admin", "user"),
-  ensureResourceExists("user"),
-  ensureUserProfileExists,
-  upload.single("imageFile"),
-  validateRequest({
-    body: updateProfileSchema,
-  }),
-  stripUnmodifiableFields,
-  controller.handleUpdateProfile,
+	"/users/:userId/profile",
+	createAuthMiddleware("admin", "user"),
+	ensureResourceExists("user"),
+	ensureUserProfileExists,
+	upload.single("imageFile"),
+	validateRequest({
+		body: updateProfileSchema,
+	}),
+	stripUnmodifiableFields,
+	controller.handleUpdateProfile,
 );
 
 profilesRouter.patch(
-  "/users/:userId/profile/activate",
-  ensureResourceExists("user"),
-  ensureUserProfileExists,
-  validateRequest({
-    body: updateProfileSchema,
-  }),
-  controller.handleActivateProfile,
+	"/users/:userId/profile/activate",
+	ensureResourceExists("user"),
+	ensureUserProfileExists,
+	validateRequest({
+		body: updateProfileSchema,
+	}),
+	controller.handleActivateProfile,
 );
 
 profilesRouter.delete(
-  "/users/:userId/profile",
-  createAuthMiddleware("admin"),
-  ensureResourceExists("user"),
-  ensureUserProfileExists,
-  controller.handleDeleteProfile,
+	"/users/:userId/profile",
+	createAuthMiddleware("admin"),
+	ensureResourceExists("user"),
+	ensureUserProfileExists,
+	controller.handleDeleteProfile,
 );
 
 export default profilesRouter;

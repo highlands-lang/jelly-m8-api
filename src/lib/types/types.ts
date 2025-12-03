@@ -8,31 +8,31 @@ import type { OPERATORS } from "../constants";
 
 export type Roles = "admin" | "user";
 export type RequireAtLeastOne<T> = {
-  [K in keyof T]-?: Required<Pick<T, K>> &
-    Partial<Pick<T, Exclude<keyof T, K>>>;
+	[K in keyof T]-?: Required<Pick<T, K>> &
+		Partial<Pick<T, Exclude<keyof T, K>>>;
 }[keyof T];
 
 // More strictly typed Express.Request type
 export type TypedRequest<
-  ReqBody = Record<string, unknown>,
-  QueryString = Record<string, unknown>,
-  Params = Record<string, unknown>,
+	ReqBody = Record<string, unknown>,
+	QueryString = Record<string, unknown>,
+	Params = Record<string, unknown>,
 > = Request<
-  DeepPartial<Params>,
-  Record<string, unknown>,
-  DeepPartial<ReqBody>,
-  DeepPartial<QueryString>
+	DeepPartial<Params>,
+	Record<string, unknown>,
+	DeepPartial<ReqBody>,
+	DeepPartial<QueryString>
 >;
 
 // More strictly typed express middleware type
 export type ExpressMiddleware<
-  ReqBody = Record<string, unknown>,
-  Res = Record<string, unknown>,
-  QueryString = Record<string, unknown>,
+	ReqBody = Record<string, unknown>,
+	Res = Record<string, unknown>,
+	QueryString = Record<string, unknown>,
 > = (
-  req: TypedRequest<ReqBody, QueryString>,
-  res: Response<Res>,
-  next: NextFunction,
+	req: TypedRequest<ReqBody, QueryString>,
+	res: Response<Res>,
+	next: NextFunction,
 ) => Promise<void> | void;
 
 // Example usage from Stackoverflow:
@@ -45,51 +45,51 @@ export type ExpressMiddleware<
 //   res.json({ message: 'you have signed up' }) // strongly typed response obj
 // };
 export interface UserSignUpCredentials {
-  username: string;
-  email: string;
-  password: string;
+	username: string;
+	email: string;
+	password: string;
 }
 
 export type UserLoginCredentials = Omit<UserSignUpCredentials, "username">;
 
 export interface EmailRequestBody {
-  email: string;
+	email: string;
 }
 
 export interface ResetPasswordRequestBodyType {
-  newPassword: string;
+	newPassword: string;
 }
 
 export type Sanitized<T> = T extends (...args: unknown[]) => unknown
-  ? T // if T is a function, return it as is
-  : T extends object
-    ? {
-        readonly [K in keyof T]: Sanitized<T[K]>;
-      }
-    : T;
+	? T // if T is a function, return it as is
+	: T extends object
+		? {
+				readonly [K in keyof T]: Sanitized<T[K]>;
+			}
+		: T;
 
 export type SanitizeOptions = IFilterXSSOptions & {
-  whiteList?: IFilterXSSOptions["whiteList"];
+	whiteList?: IFilterXSSOptions["whiteList"];
 };
 
 export type AtLeastOne<T> = {
-  [K in keyof T]: Pick<T, K> & Partial<Omit<T, K>>;
+	[K in keyof T]: Pick<T, K> & Partial<Omit<T, K>>;
 }[keyof T];
 
 export type Pagination = {
-  pageSize?: number; // or pageSize, resultsPerPage
-  pageStart?: number; // or pageNumber, startingIndex
-  sortOrder?: "desc" | "asc"; // or direction, sortDirection
+	pageSize?: number; // or pageSize, resultsPerPage
+	pageStart?: number; // or pageNumber, startingIndex
+	sortOrder?: "desc" | "asc"; // or direction, sortDirection
 };
 export type QueryOperatorNames = keyof typeof OPERATORS;
 export type QueryOperators<T> = Partial<Record<keyof T, QueryOperatorNames>>;
 export type QuerySort<T> = {
-  asc?: (keyof T)[];
-  desc?: (keyof T)[];
+	asc?: (keyof T)[];
+	desc?: (keyof T)[];
 };
 export type QueryConfig<T> = {
-  queryOptions?: Partial<T>;
-  pagination?: Pagination;
-  operators?: QueryOperators<T>;
-  sorting?: QuerySort<T>;
+	queryOptions?: Partial<T>;
+	pagination?: Pagination;
+	operators?: QueryOperators<T>;
+	sorting?: QuerySort<T>;
 };

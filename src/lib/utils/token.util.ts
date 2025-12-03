@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../config/config";
-import { JwtPayload } from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 const { sign } = jwt;
@@ -12,7 +12,7 @@ const { sign } = jwt;
  * @returns Returns a valid access token
  */
 export const createAccessToken = (payload: JwtPayload): string => {
-  return sign(payload, config.jwt.access_token.secret, {
-    expiresIn: config.jwt.access_token.expire,
-  });
+	return sign(payload, config.jwt.access_token.secret, {
+		expiresIn: config.jwt.access_token.expire,
+	});
 };

@@ -4,8 +4,8 @@ import { z } from "zod";
 import userService from "@/features/users/user.service";
 import profileService from "@/features/profiles/profile.service";
 import {
-  type ParamsProfileId,
-  paramsProfileIdSchema,
+	type ParamsProfileId,
+	paramsProfileIdSchema,
 } from "@/features/profiles/profile.schema";
 import { paramsComplimentIdSchema } from "@/features/profiles/compliments/compliment.schema";
 import complimentService from "@/shared/services/compliment.service";
@@ -13,37 +13,37 @@ import questionService from "@/features/questions/question.service";
 
 // Configuration object for different resources
 const RESOURCE_CONFIG = {
-  user: {
-    schema: z.object({
-      userId: z.coerce.number().positive(),
-    }),
-    serviceFn: (data: { userId: number }) =>
-      userService.getUserBy({ id: data.userId }),
-  },
-  profile: {
-    schema: paramsProfileIdSchema,
-    serviceFn: (data: ParamsProfileId) =>
-      profileService.getProfileBy({ id: data.profileId }),
-  },
-  compliment: {
-    schema: paramsComplimentIdSchema,
-    serviceFn: (data: { complimentId: number }) =>
-      complimentService.getComplimentBy({ id: data.complimentId }),
-  },
-  question: {
-    schema: z.object({
-      questionId: z.coerce.number().positive(),
-    }),
-    serviceFn: async (data: { questionId: number }) => {
-      return (
-        await questionService.getQuestions({
-          queryOptions: {
-            id: data.questionId,
-          },
-        })
-      ).at(0);
-    },
-  },
+	user: {
+		schema: z.object({
+			userId: z.coerce.number().positive(),
+		}),
+		serviceFn: (data: { userId: number }) =>
+			userService.getUserBy({ id: data.userId }),
+	},
+	profile: {
+		schema: paramsProfileIdSchema,
+		serviceFn: (data: ParamsProfileId) =>
+			profileService.getProfileBy({ id: data.profileId }),
+	},
+	compliment: {
+		schema: paramsComplimentIdSchema,
+		serviceFn: (data: { complimentId: number }) =>
+			complimentService.getComplimentBy({ id: data.complimentId }),
+	},
+	question: {
+		schema: z.object({
+			questionId: z.coerce.number().positive(),
+		}),
+		serviceFn: async (data: { questionId: number }) => {
+			return (
+				await questionService.getQuestions({
+					queryOptions: {
+						id: data.questionId,
+					},
+				})
+			).at(0);
+		},
+	},
 } as const;
 
 type ResourceType = keyof typeof RESOURCE_CONFIG;
@@ -53,43 +53,46 @@ type ResourceType = keyof typeof RESOURCE_CONFIG;
  * @param resource - The type of resource to check (user, profile, or compliment).
  */
 export const ensureResourceExists = (
-  resource: ResourceType,
-  {
-    returnResourceResponse = false,
-  }: {
-    returnResourceResponse?: boolean;
-  } = {},
+	resource: ResourceType,
+	{
+		returnResourceResponse = false,
+	}: {
+		returnResourceResponse?: boolean;
+	} = {},
 ) => {
-  const config = RESOURCE_CONFIG[resource];
+	const config = RESOURCE_CONFIG[resource];
 
-  return async (req: Request, res: Response, next: NextFunction) => {
-    // Validate request parameters against the schema
-    const validationResult = config.schema.safeParse(req.params);
+	return async (req: Request, res: Response, next: NextFunction) => {
+		// Validate request parameters against the schema
+		const validationResult = config.schema.safeParse(req.params);
 
-    if (!validationResult.success) {
-      return res.status(httpStatus.BAD_REQUEST).json({
-        status: "error",
-        message: "Invalid parameters",
-        details: validationResult.error.errors,
-      });
-    }
+		if (!validationResult.success) {
+			return res.status(httpStatus.BAD_REQUEST).json({
+				status: "error",
+				message: "Invalid parameters",
+				details: validationResult.error.errors,
+			});
+		}
 
-    const { data } = validationResult;
+		const { data } = validationResult;
 
-    // Check if the resource exists
-    const resourceExists = await config.serviceFn(data as any);
+		// Check if the resource exists
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		const resourceExists = await config.serviceFn(data as any);
 
-    if (!resourceExists) {
-      return res.status(httpStatus.NOT_FOUND).json({
-        status: "error",
-        message: `${resource.charAt(0).toUpperCase() + resource.slice(1)} not found`,
-      });
-    }
-    if (returnResourceResponse) {
-      return res.status(httpStatus.OK).json({
-        data: resourceExists,
-      });
-    }
-    next();
-  };
+		if (!resourceExists) {
+			return res.status(httpStatus.NOT_FOUND).json({
+				status: "error",
+				message: `${
+					resource.charAt(0).toUpperCase() + resource.slice(1)
+				} not found`,
+			});
+		}
+		if (returnResourceResponse) {
+			return res.status(httpStatus.OK).json({
+				data: resourceExists,
+			});
+		}
+		next();
+	};
 };

@@ -1,119 +1,119 @@
 import {
-  integer,
-  pgTable,
-  serial,
-  text,
-  varchar,
-  boolean,
-  unique,
-  timestamp,
+	integer,
+	pgTable,
+	serial,
+	text,
+	varchar,
+	boolean,
+	unique,
+	timestamp,
 } from "drizzle-orm/pg-core";
 
 // Users Table with enum
 export const UsersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: varchar("username", { length: 100 }).notNull().unique(),
-  userRole: varchar({ enum: ["admin", "user"] })
-    .default("user")
-    .notNull(),
-  password: varchar("password", { length: 255 }).notNull(),
+	id: serial("id").primaryKey(),
+	username: varchar("username", { length: 100 }).notNull().unique(),
+	userRole: varchar({ enum: ["admin", "user"] })
+		.default("user")
+		.notNull(),
+	password: varchar("password", { length: 255 }).notNull(),
 });
 
 // User Profiles Table with enum
 export const UserProfilesTable = pgTable(
-  "profiles",
-  {
-    id: serial("id").primaryKey(),
-    userId: integer("user_id")
-      .notNull()
-      .unique()
-      .references(() => UsersTable.id, {
-        onDelete: "cascade",
-      }),
-    displayName: varchar("display_name", { length: 100 }).notNull(),
-    gender: varchar({
-      enum: ["male", "female"],
-    }).notNull(),
-    occupation: varchar({
-      enum: ["teacher", "student"],
-    })
-      .default("student")
-      .notNull(),
-    biography: text("biography"),
-    isActivated: boolean().default(false),
-    activationSecret: varchar({ length: 255 }).notNull(),
-    profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
-    quote: text(),
-  },
-  (t) => [
-    {
-      userProfileConstraint: unique().on(t.id, t.userId),
-    },
-  ]
+	"profiles",
+	{
+		id: serial("id").primaryKey(),
+		userId: integer("user_id")
+			.notNull()
+			.unique()
+			.references(() => UsersTable.id, {
+				onDelete: "cascade",
+			}),
+		displayName: varchar("display_name", { length: 100 }).notNull(),
+		gender: varchar({
+			enum: ["male", "female"],
+		}).notNull(),
+		occupation: varchar({
+			enum: ["teacher", "student"],
+		})
+			.default("student")
+			.notNull(),
+		biography: text("biography"),
+		isActivated: boolean().default(false),
+		activationSecret: varchar({ length: 255 }).notNull(),
+		profileImageUrl: varchar("profile_image_url", { length: 500 }).notNull(),
+		quote: text(),
+	},
+	(t) => [
+		{
+			userProfileConstraint: unique().on(t.id, t.userId),
+		},
+	],
 );
 
 // Compliments Table
 export const ComplimentsTable = pgTable(
-  "compliments",
-  {
-    id: serial("id").primaryKey(),
-    title: varchar("title", {
-      length: 255,
-    }).notNull(),
-    content: text().notNull(),
-    userId: integer("user_id")
-      .notNull()
-      .references(() => UsersTable.id, {
-        onDelete: "cascade",
-      }),
-    profileId: integer("profile_id")
-      .notNull()
-      .references(() => UserProfilesTable.id, {
-        onDelete: "cascade",
-      }),
-    visibility: text({
-      enum: ["public", "private"],
-    })
-      .notNull()
-      .default("public"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    isAdmin: boolean("is_admin").default(false),
-    likes: integer().default(0).notNull(),
-  },
-  (t) => [
-    {
-      userProfileConstraint: unique().on(t.userId, t.profileId),
-    },
-  ]
+	"compliments",
+	{
+		id: serial("id").primaryKey(),
+		title: varchar("title", {
+			length: 255,
+		}).notNull(),
+		content: text().notNull(),
+		userId: integer("user_id")
+			.notNull()
+			.references(() => UsersTable.id, {
+				onDelete: "cascade",
+			}),
+		profileId: integer("profile_id")
+			.notNull()
+			.references(() => UserProfilesTable.id, {
+				onDelete: "cascade",
+			}),
+		visibility: text({
+			enum: ["public", "private"],
+		})
+			.notNull()
+			.default("public"),
+		createdAt: timestamp("created_at").defaultNow().notNull(),
+		isAdmin: boolean("is_admin").default(false),
+		likes: integer().default(0).notNull(),
+	},
+	(t) => [
+		{
+			userProfileConstraint: unique().on(t.userId, t.profileId),
+		},
+	],
 );
 
 // Likes Table
 export const LikesTable = pgTable(
-  "likes",
-  {
-    id: serial("id").primaryKey(),
-    userId: integer("user_id")
-      .notNull()
-      .references(() => UsersTable.id, { onDelete: "cascade" }), // User who liked,
-    complimentId: integer("compliment_id")
-      .references(() => ComplimentsTable.id, { onDelete: "cascade" })
-      .notNull(), // Liked compliment (optional)
-    // Timestamp of the like
-  },
-  (t) => ({
-    // Ensure a user can only like a profile or compliment once
-    uniqueLikeConstraint: unique().on(t.userId, t.complimentId),
-  })
+	"likes",
+	{
+		id: serial("id").primaryKey(),
+		userId: integer("user_id")
+			.notNull()
+			.references(() => UsersTable.id, { onDelete: "cascade" }), // User who liked,
+		complimentId: integer("compliment_id")
+			.references(() => ComplimentsTable.id, { onDelete: "cascade" })
+			.notNull(), // Liked compliment (optional)
+		// Timestamp of the like
+	},
+	(t) => ({
+		// Ensure a user can only like a profile or compliment once
+		uniqueLikeConstraint: unique().on(t.userId, t.complimentId),
+	}),
 );
 
 export const QuestionsTable = pgTable("questions", {
-  id: serial("id").primaryKey(),
-  content: varchar({ length: 255 }).notNull(),
-  userId: integer()
-    .references(() => UsersTable.id, { onDelete: "cascade" })
-    .notNull(),
-  isApproved: boolean().default(false).notNull(),
-  createdAt: timestamp().defaultNow().notNull(),
+	id: serial("id").primaryKey(),
+	content: varchar({ length: 255 }).notNull(),
+	userId: integer()
+		.references(() => UsersTable.id, { onDelete: "cascade" })
+		.notNull(),
+	isApproved: boolean().default(false).notNull(),
+	createdAt: timestamp().defaultNow().notNull(),
 });
 
 // Type Definitions

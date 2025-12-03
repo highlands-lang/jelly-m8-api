@@ -9,46 +9,46 @@ const usersRouter: Router = Router();
 
 // Create user
 usersRouter.post(
-  "/users",
-  createAuthMiddleware("admin"),
-  validateRequest({ body: createUserSchema }),
-  controller.handleCreateUser
+	"/users",
+	createAuthMiddleware("admin"),
+	validateRequest({ body: createUserSchema }),
+	controller.handleCreateUser,
 );
 
 // Get all users
 usersRouter.get(
-  "/users",
-  createAuthMiddleware("admin"),
-  controller.handleGetUsers
+	"/users",
+	createAuthMiddleware("admin"),
+	controller.handleGetUsers,
 );
 //  Get user
 usersRouter.get(
-  "/users/:userId",
-  createAuthMiddleware("admin"),
-  ensureResourceExists("user", {
-    returnResourceResponse: true,
-  })
+	"/users/:userId",
+	createAuthMiddleware("admin"),
+	ensureResourceExists("user", {
+		returnResourceResponse: true,
+	}),
 );
 // Get currently authenticated user
 usersRouter.get(
-  "/auth",
-  createAuthMiddleware("admin", "user"),
-  controller.handleGetCurrentUser
+	"/auth",
+	createAuthMiddleware("admin", "user"),
+	controller.handleGetCurrentUser,
 );
 // Invalidate access token
 usersRouter.patch(
-  "/users/:userId/password/invalidate",
-  createAuthMiddleware("admin"),
-  ensureResourceExists("user"),
-  controller.handleInvalidateUserPassword
+	"/users/:userId/password/invalidate",
+	createAuthMiddleware("admin"),
+	ensureResourceExists("user"),
+	controller.handleInvalidateUserPassword,
 );
 
 // Detele user
 usersRouter.delete(
-  "/users/:userId",
-  createAuthMiddleware("admin"),
-  ensureResourceExists("user"),
-  controller.handleDeleteUser
+	"/users/:userId",
+	createAuthMiddleware("admin"),
+	ensureResourceExists("user"),
+	controller.handleDeleteUser,
 );
 
 export default usersRouter;
